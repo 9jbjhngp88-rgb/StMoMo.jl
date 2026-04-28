@@ -11,5 +11,5 @@ using SpecialFunctions
 include("genWeightMat.jl")
 include("lc.jl")
 include("fit_StMoMo.jl")
-export genWeightMat, fit_StMoMo
+export genWeightMat, fit_StMoMo, lc
 end

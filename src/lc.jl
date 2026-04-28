@@ -1,5 +1,5 @@
 function lc(;link=link, constraint=constraint)
-    function constLC(ax, bx, kt,b0x, gc, wxt, ages)
+    function constLC(ax, bx, kt,b0x, gc, wxt, ages; constraint=constraint)
         if constraint=="sum"
             c1=mean(kt)
         elseif constraint=="last"
@@ -28,5 +28,5 @@ function lc(;link=link, constraint=constraint)
         kt0=Σ[1]*V[:,1] 
         return vcat(ax0,bx0,kt0)
     end
-    return (link=link,  staticAgeFun=true, periodAgeFun="NP", cohortAgeFun= nothing, constFun=constLC, N=1,optimFun=dxt_hat,startingValues=staringvalues)
+    return (link=link,  staticAgeFun=true, periodAgeFun="NP", cohortAgeFun= nothing, constFun=constLC, N=1, optimFun=dxt_hat, startingValues=staringvalues)
 end

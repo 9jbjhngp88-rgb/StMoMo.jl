@@ -8,7 +8,7 @@ using Statistics
 using Distributions
 using SpecialFunctions
 
-genWeightMat = include("genWeightMat.jl")
+include("genWeightMat.jl")
 
 export genWeightMat
 end

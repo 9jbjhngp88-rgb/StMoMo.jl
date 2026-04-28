@@ -1,4 +1,4 @@
-function genWeightMat(ages, years, clip, zeroCohorts)
+function genWeightMat(ages, years; clip=0, zeroCohorts=nothing)
     nAges=length(ages)
     nYears=length(years)
     cohorts=(years[1]-ages[end]):(years[end]-ages[1])
@@ -10,21 +10,22 @@ function genWeightMat(ages, years, clip, zeroCohorts)
         Wxt[nAges-clip+1:nAges,1:clip]=cl
         Wxt[1:clip,nYears-clip+1:nYears]=transpose(cl)
     end
-    
-    for i in zeroCohorts
-        h= i-cohorts[1]+1-nAges
-        if h<=0
-            col=1
-            row=1-h
-        else
-            col=h+1
-            row=1
-        end
+    if zeroCohorts!=nothing
+        for i in zeroCohorts
+            h= i-cohorts[1]+1-nAges
+            if h<=0
+                col=1
+                row=1-h
+            else
+                col=h+1
+                row=1
+            end
 
-        while col<=nYears && row<=nAges
-            Wxt[row,col]=0
-            col+=1
-            row+=1 
+            while col<=nYears && row<=nAges
+                Wxt[row,col]=0
+                col+=1
+                row+=1 
+            end
         end
     end
     return Wxt

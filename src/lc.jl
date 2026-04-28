@@ -1,4 +1,4 @@
-function lc(;link=["log", "logit"], constraint=["sum", "last", "first"])
+function lc(;link=link, constraint=constraint)
     function constLC(ax, bx, kt,b0x, gc, wxt, ages)
         if constraint=="sum"
             c1=mean(kt)
@@ -28,5 +28,5 @@ function lc(;link=["log", "logit"], constraint=["sum", "last", "first"])
         kt0=Σ[1]*V[:,1] 
         return vcat(ax0,bx0,kt0)
     end
-    return (link=link,  staticAgeFun=true, periodAgeFun="NP", cohortAgeFun= nothing, constFun=constLC(), N=N,optim_func=dxt_hat,starting_values=staringvalues())
+    return (link=link,  staticAgeFun=true, periodAgeFun="NP", cohortAgeFun= nothing, constFun=constLC, N=1,optimFun=dxt_hat,startingValues=staringvalues)
 end

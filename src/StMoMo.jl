@@ -9,6 +9,6 @@ using Distributions
 using SpecialFunctions
 
 include("genWeightMat.jl")
-
-export genWeightMat
+include("fit_StMoMo.jl")
+export genWeightMat, fit_StMoMo
 end

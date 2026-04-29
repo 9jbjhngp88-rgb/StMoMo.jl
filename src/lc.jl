@@ -18,8 +18,8 @@ function lc(;link=link, constraint=constraint)
         return (ax=ax,bx=bx,kt=kt)    
     end
 
-    function model(α, βκ, i, j)
-        return α[i]+βκ[i,j]
+    function model(α, β, κ, i, j)
+        return α[i]+β[i,1]*κ[1,j]
     end
 
     function staringvalues(Dxt,Ext,Ages_fit)

@@ -1,5 +1,8 @@
 function lc(;link=link, constraint=constraint)
-    function constLC(ax, bx, kt,b0x, gc, wxt, ages; constraint=constraint)
+    N=1
+    function constLC(ax, bx, kt, constraint)
+        bx=bx[:,1]
+        kt=kt[1,:]
         if constraint=="sum"
             c1=mean(kt)
         elseif constraint=="last"
@@ -12,11 +15,13 @@ function lc(;link=link, constraint=constraint)
         c2=sum(bx)
         bx=bx/c2
         kt=kt.*c2
-        return (ax=ax,bx=bx,kt=kt,b0x=b0x,gc=gc)    
+        return (ax=ax,bx=bx,kt=kt)    
     end
-    function dxt_hat(Ext, α, βκ, i, j)
-        return Ext[i+min_Age,j]*exp(α[i]+βκ[i,j])
+
+    function model(α, βκ, i, j)
+        return α[i]+βκ[i,j]
     end
+
     function staringvalues(Dxt,Ext,Ages_fit)
         log_m=log.(Dxt./Ext)
         log_m[isinf.(log_m)] .= 0
@@ -28,5 +33,6 @@ function lc(;link=link, constraint=constraint)
         kt0=Σ[1]*V[:,1] 
         return vcat(ax0,bx0,kt0)
     end
-    return (link=link,  staticAgeFun=true, periodAgeFun="NP", cohortAgeFun= nothing, constFun=constLC, N=1, optimFun=dxt_hat, startingValues=staringvalues)
+
+    return (link=link, constFun=constLC, modelFun=model, startingValues=staringvalues, N=N, constraint=constraint)
 end

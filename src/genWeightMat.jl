@@ -10,7 +10,7 @@ function genWeightMat(ages, years; clip=0, zeroCohorts=nothing)
         Wxt[nAges-clip+1:nAges,1:clip]=cl
         Wxt[1:clip,nYears-clip+1:nYears]=transpose(cl)
     end
-    if zeroCohorts!=nothing
+    if zeroCohorts!==nothing
         for i in zeroCohorts
             h= i-cohorts[1]+1-nAges
             if h<=0

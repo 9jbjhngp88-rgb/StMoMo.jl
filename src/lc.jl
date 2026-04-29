@@ -31,6 +31,12 @@ function lc(;link=link, constraint=constraint)
         U, Σ, V=svd(Z)
         bx0=U[:,1][minimum(Ages_fit):maximum(Ages_fit)]
         kt0=Σ[1]*V[:,1] 
+        c1=mean(kt0)
+        c2=sum(bx0)
+        ax0=ax0+c1*bx0
+        kt0=kt0.-c1
+        bx0=bx0/c2
+        kt0=kt0.*c2
         return vcat(ax0,bx0,kt0)
     end
 

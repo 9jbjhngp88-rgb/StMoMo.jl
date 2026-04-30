@@ -7,8 +7,9 @@ function neg_loglikelihood(params,N,Dxt,Ext,Ages_fit,Wxt,Years, modelFun)
     κ=reshape(params[(nalpha+nbeta+1):end],N,length(Years))
     likelihood=0
     for i in 1:nalpha
+        start=i+min_Age
         for j in 1:length(Years)
-            likelihood-=Wxt[i,j]*(Dxt[i+min_Age,j]*modelFun(α, β, κ, i, j)-Ext[i+min_Age,j]*exp(modelFun(α, β, κ, i, j)))
+            likelihood-=Wxt[i,j]*(Dxt[start,j]*modelFun(α, β, κ, i, j)-Ext[start,j]*exp(modelFun(α, β, κ, i, j)))
         end
     end
     return likelihood

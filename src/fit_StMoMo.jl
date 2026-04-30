@@ -5,15 +5,10 @@ function neg_loglikelihood(params,N,Dxt,Ext,Ages_fit,Wxt,Years, modelFun)
     α=params[1:nalpha]
     β=reshape(params[(1+nalpha):(nalpha+nbeta)],nalpha,N)
     κ=reshape(params[(nalpha+nbeta+1):end],N,length(Years))
-    # βκ=β*κ
     likelihood=0
-
     for i in 1:nalpha
         for j in 1:length(Years)
-            d_hat_xt=Ext[i+min_Age,j]*exp(modelFun(α, β, κ, i, j))
-            dxt=Dxt[i+min_Age,j]
-            w=Wxt[i,j]
-            likelihood-=w*(dxt*log(d_hat_xt)-d_hat_xt-logfactorial(dxt))
+            likelihood-=Wxt[i,j]*(Dxt[i+min_Age,j]*modelFun(α, β, κ, i, j)-Ext[i+min_Age,j]*exp(modelFun(α, β, κ, i, j)))
         end
     end
     return likelihood
@@ -27,12 +22,9 @@ function fit_StMoMo(; model=model,Dxt=nothing,Ext=nothing,Ages_fit=nothing,Wxt=n
     N=model.N
     constraint=model.constraint
     
-
     X0=startingvalues(Dxt,Ext,Ages_fit)
-    #x1=optimize(p->neg_loglikelihood(p,N,Dxt,Ext,Ages_fit,Wxt,Years, modelFun=modelFun),X0,NelderMead())  
-    t1= @elapsed x=optimize(p -> neg_loglikelihood(p,N,Dxt,Ext,Ages_fit,Wxt,Years, modelFun),X0,BFGS(); autodiff=AutoForwardDiff())
+    x=optimize(p -> neg_loglikelihood(p,N,Dxt,Ext,Ages_fit,Wxt,Years, modelFun),X0,BFGS(); autodiff=AutoForwardDiff())
 
-        
     nalpha=length(Ages_fit)
     nbeta=nalpha*N
     α=x.minimizer[1:nalpha]

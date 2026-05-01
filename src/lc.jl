@@ -18,16 +18,17 @@ function lc(;link=link, constraint=constraint)
         return (ax=ax,bx=bx,kt=kt)    
     end
 
-    function model(α, β, κ, i, j)
-        return α[i]+β[i,1]*κ[1,j]
+    function model(α, β, κ)
+        return α.+β*κ
     end
 
     function staringvalues(Dxt,Ext,Ages_fit)
         log_m=log.(Dxt./Ext)
         log_m[isinf.(log_m)] .= 0
         log_m[isnan.(log_m)] .= 0
-        ax0=mean(log_m, dims=2)[minimum(Ages_fit):maximum(Ages_fit)]
-        Z=log_m .- mean(log_m, dims=2)
+        col_mean=mean(log_m, dims=2)
+        ax0=col_mean[minimum(Ages_fit):maximum(Ages_fit)]
+        Z=log_m .- col_mean
         U, Σ, V=svd(Z)
         bx0=U[:,1][minimum(Ages_fit):maximum(Ages_fit)]
         kt0=Σ[1]*V[:,1] 

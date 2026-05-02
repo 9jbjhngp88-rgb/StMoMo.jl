@@ -4,8 +4,10 @@ function neg_loglikelihood(params,N,Dxt,Ext,Wxt,Years, modelFun, nalpha, nbeta, 
     κ=reshape(params[(nalpha+nbeta+1):end],N,length(Years))
     likelihood=0
     @inbounds for i in 1:nalpha
+        α_i=α[i]
+        β_i=β[i,1]
         for j in 1:nYears
-            model=modelFun(α[i], β[i,1], κ[1,j])
+            model=modelFun(α_i, β_i, κ[1,j])
             likelihood-=Wxt[i,j]*(Dxt[i,j]*model-Ext[i,j]*exp(model))
         end
     end

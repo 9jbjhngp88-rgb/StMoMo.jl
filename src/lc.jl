@@ -22,15 +22,24 @@ function lc(;link=link, constraint=constraint)
         return α.+β*κ
     end
 
-    function staringvalues(Dxt,Ext,Ages_fit)
-        log_m=log.(Dxt./Ext)
-        log_m[isinf.(log_m)] .= 0
-        log_m[isnan.(log_m)] .= 0
-        col_mean=mean(log_m, dims=2)
-        ax0=col_mean[minimum(Ages_fit):maximum(Ages_fit)]
-        Z=log_m .- col_mean
+    function staringvalues(Dxt,Ext,Ages_fit,link)
+        if link=="log"
+            log_m=log.(Dxt./Ext)
+            log_m[isinf.(log_m)] .= 0
+            log_m[isnan.(log_m)] .= 0
+            ax0=mean(log_m, dims=2)
+            Z=log_m .- ax0
+    
+
+        elseif link=="logit"
+            qxt=Dxt./Ext
+            logit_qxt=log.(qxt./(1 .- qxt))
+            colmean=mean(logit_qxt, dims=2)
+            ax0=colmean
+            Z=logit_qxt .- ax0
+        end
         U, Σ, V=svd(Z)
-        bx0=U[:,1][minimum(Ages_fit):maximum(Ages_fit)]
+        bx0=U[:,1]
         kt0=Σ[1]*V[:,1] 
         c1=mean(kt0)
         c2=sum(bx0)
@@ -38,6 +47,7 @@ function lc(;link=link, constraint=constraint)
         kt0=kt0.-c1
         bx0=bx0/c2
         kt0=kt0.*c2
+
         return vcat(ax0,bx0,kt0)
     end
 

@@ -14,7 +14,7 @@ function neg_loglikelihood_poisson(params,N,Dxt,Ext,Wxt,Years, modelFun, nalpha,
     return likelihood
 end
 
-function neg_loglikelihood_binomial(params,N,Dxt,E0dxt,E0xt,Wxt,Years, modelFun, nalpha, nbeta, nYears)
+function neg_loglikelihood_binomial(params,N,Dxt,Ext,Wxt,Years, modelFun, nalpha, nbeta, nYears)
     α=params[1:nalpha]
     β=reshape(params[(1+nalpha):(nalpha+nbeta)],nalpha,N)
     κ=reshape(params[(nalpha+nbeta+1):end],N,length(Years))
@@ -23,9 +23,9 @@ function neg_loglikelihood_binomial(params,N,Dxt,E0dxt,E0xt,Wxt,Years, modelFun,
         α_i=α[i]
         β_i=β[i,1]
         for j in 1:nYears
-            model_link=1/(1+exp(-modelFun(α_i, β_i, κ[1,j])))
-            dxt_hat=E0xt[i,j]*model_link
-            likelihood-=Wxt[i,j]*(Dxt[i,j]*log(dxt_hat/E0xt[i,j])+E0dxt[i,j]*log((E0xt[i,j]-dxt_hat)/E0xt[i,j])+log(E0xt[i,j]/Dxt[i,j]))
+            model_num=1+exp(-modelFun(α_i, β_i, κ[1,j]))
+            model_link=1/model_num
+            likelihood-=Wxt[i,j]*(-Dxt[i,j]*log(model_num)+(Ext[i,j]-Dxt[i,j])*log(1-model_link))
         end
     end
     return likelihood
@@ -47,14 +47,14 @@ function fit_StMoMo(; model=nothing,Dxt=nothing,Ext=nothing,Ages_fit=nothing,Wxt
     Ext=Ext[min_Age+1:max_ages+1,:]
     Dxt=Dxt[min_Age+1:max_ages+1,:]
 
-    X0=startingvalues(Dxt,Ext,Ages_fit,link)
+    X0=startingvalues(Dxt,Ext,link)
 
     if link=="log"
         x=optimize(p -> neg_loglikelihood_poisson(p,N,Dxt,Ext,Wxt,Years, modelFun, nalpha, nbeta, nYears),X0,BFGS(); autodiff=AutoForwardDiff())
     elseif link=="logit"
-        E0xt=Ext.+0.5*Dxt
-        E0dxt=E0xt.-Dxt
-        x=optimize(p -> neg_loglikelihood_binomial(p,N,Dxt,E0dxt,E0xt,Wxt,Years, modelFun, nalpha, nbeta, nYears),X0,BFGS(); autodiff=AutoForwardDiff())
+        # E0xt=Ext.+0.5*Dxt
+        # E0dxt=E0xt.-Dxt
+        x=optimize(p -> neg_loglikelihood_binomial(p,N,Dxt,Ext,Wxt,Years, modelFun, nalpha, nbeta, nYears),X0,BFGS(); autodiff=AutoForwardDiff())
     end
 
     α=x.minimizer[1:nalpha]

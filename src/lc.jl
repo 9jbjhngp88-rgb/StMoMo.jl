@@ -22,7 +22,7 @@ function lc(;link=link, constraint=constraint)
         return α.+β*κ
     end
 
-    function staringvalues(Dxt,Ext,Ages_fit,link)
+    function staringvalues(Dxt,Ext,link)
         if link=="log"
             log_m=log.(Dxt./Ext)
             log_m[isinf.(log_m)] .= 0
